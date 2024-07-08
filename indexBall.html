@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Catch the Ball Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(to right, #ff9966, #ff5e62);
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        h1 {
+            color: #fff;
+        }
+        #gameArea {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            border: 2px solid #fff;
+            background: #333;
+            overflow: hidden;
+        }
+        #ball {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #ff4757;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #score, #highScore, #time {
+            color: #fff;
+            margin-top: 10px;
+            font-size: 1.5em;
+        }
+        #resetButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            background: #ff6f61;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        #resetButton:hover {
+            background: #ff4757;
+        }
+    </style>
+</head>
+<body>
+    <h1>Catch the Ball Game</h1>
+    <div id="gameArea">
+        <div id="ball"></div>
+    </div>
+    <div id="score">Score: 0</div>
+    <div id="highScore">High Score: 0</div>
+    <div id="time">Time Left: 30</div>
+    <button id="resetButton" onclick="resetGame()">Reset Game</button>
+
+    <script>
+        let score = 0;
+        let highScore = 0;
+        let timeLeft = 30;
+        let gameInterval, timerInterval;
+        let gameActive = true;
+        const ball = document.getElementById('ball');
+        const gameArea = document.getElementById('gameArea');
+        const scoreDisplay = document.getElementById('score');
+        const highScoreDisplay = document.getElementById('highScore');
+        const timeDisplay = document.getElementById('time');
+
+        function moveBall() {
+            if (!gameActive) return;  // לא זזים אם המשחק נגמר
+            const x = Math.random() * (gameArea.clientWidth - ball.clientWidth);
+            const y = Math.random() * (gameArea.clientHeight - ball.clientHeight);
+            ball.style.left = `${x}px`;
+            ball.style.top = `${y}px`;
+        }
+
+        function startGame() {
+            score = 0;
+            timeLeft = 30;
+            gameActive = true;
+            scoreDisplay.textContent = `Score: ${score}`;
+            timeDisplay.textContent = `Time Left: ${timeLeft}`;
+            moveBall();
+
+            gameInterval = setInterval(moveBall, 2000); // Move the ball every two seconds
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = `Time Left: ${timeLeft}`;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            gameActive = false;
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            if (score > highScore) {
+                highScore = score;
+                highScoreDisplay.textContent = `High Score: ${highScore}`;
+            }
+            alert('Game Over! Your score is ' + score);
+        }
+
+        function resetGame() {
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            startGame();
+        }
+
+        ball.addEventListener('click', () => {
+            if (!gameActive) return; // לא צוברים נקודות אם המשחק נגמר
+            score++;
+            scoreDisplay.textContent = `Score: ${score}`;
+            moveBall();
+        });
+
+        startGame(); // Start the game when the page loads
+    </script>
+</body>
+</html>
+
